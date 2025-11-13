@@ -126,6 +126,25 @@ func handlerFeed(s *state, cmd command) error {
 		UserID:    userDB.ID,
 	}
 
+	s.db.CreateFeed(context.Background(), feedParams)
 	fmt.Printf("%+v\n", feedParams)
+	return nil
+}
+
+func handlerShowFeeds(s *state, cmd command) error {
+	if len(cmd.arguments) != 0 {
+		return fmt.Errorf("%s does not take arguments\n", cmd.name)
+	}
+
+	feeds, err := s.db.GetUserFeeds(context.Background())
+	if err != nil {
+		return fmt.Errorf("Couldn't get user feeds: %w\n", err)
+	}
+	for _, feed := range feeds {
+		fmt.Printf("%s\n", feed.FeedName)
+		fmt.Printf("%s\n", feed.Url)
+		fmt.Printf("%s\n", feed.UserName)
+	}
+
 	return nil
 }
