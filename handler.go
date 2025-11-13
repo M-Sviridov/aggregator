@@ -103,3 +103,29 @@ func handlerAgg(s *state, cmd command) error {
 	fmt.Println(rssFeed)
 	return nil
 }
+
+func handlerFeed(s *state, cmd command) error {
+	if len(cmd.arguments) != 2 {
+		return fmt.Errorf("Usage: %s <feedname> <feedurl>", cmd.name)
+	}
+
+	feedName := cmd.arguments[0]
+	feedUrl := cmd.arguments[1]
+	username := s.cfg.CurrentUser
+	userDB, err := s.db.GetUser(context.Background(), username)
+	if err != nil {
+		return fmt.Errorf("Could not get user from DB: %w\n", err)
+	}
+
+	feedParams := database.CreateFeedParams{
+		ID:        uuid.New(),
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+		Name:      feedName,
+		Url:       feedUrl,
+		UserID:    userDB.ID,
+	}
+
+	fmt.Printf("%+v\n", feedParams)
+	return nil
+}
