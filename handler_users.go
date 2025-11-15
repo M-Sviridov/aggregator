@@ -11,7 +11,7 @@ import (
 
 func handlerLogin(s *state, cmd command) error {
 	if len(cmd.arguments) != 1 {
-		return fmt.Errorf("Usage: %s <username>", cmd.name)
+		return fmt.Errorf("usage: %s <username>", cmd.name)
 	}
 	username := cmd.arguments[0]
 
@@ -31,7 +31,7 @@ func handlerLogin(s *state, cmd command) error {
 
 func handlerRegister(s *state, cmd command) error {
 	if len(cmd.arguments) != 1 {
-		return fmt.Errorf("Usage: %s <username>", cmd.name)
+		return fmt.Errorf("usage: %s <username>", cmd.name)
 	}
 	username := cmd.arguments[0]
 	userParams := database.CreateUserParams{
@@ -43,12 +43,12 @@ func handlerRegister(s *state, cmd command) error {
 
 	_, err := s.db.GetUserByName(context.Background(), username)
 	if err == nil {
-		return fmt.Errorf("The user %s already exists\n", username)
+		return fmt.Errorf("user already exists: %w", err)
 	}
 
 	_, err = s.db.CreateUser(context.Background(), userParams)
 	if err != nil {
-		return fmt.Errorf("Couldn't create user: %w\n", err)
+		return fmt.Errorf("couldn't create user: %w", err)
 	}
 	s.cfg.SetUser(username)
 	fmt.Printf("The user %s has been created\n", username)
@@ -58,12 +58,12 @@ func handlerRegister(s *state, cmd command) error {
 
 func handlerUsers(s *state, cmd command) error {
 	if len(cmd.arguments) != 0 {
-		return fmt.Errorf("%s does not take arguments\n", cmd.name)
+		return fmt.Errorf("%s does not take arguments", cmd.name)
 	}
 
 	users, err := s.db.GetUsers(context.Background())
 	if err != nil {
-		return fmt.Errorf("Error in getting all users: %w", err)
+		return fmt.Errorf("error in getting all users: %w", err)
 	}
 
 	for _, user := range users {

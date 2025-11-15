@@ -13,12 +13,12 @@ import (
 func main() {
 	cfg, err := config.Read()
 	if err != nil {
-		log.Fatalf("Error reading config file: %v", err)
+		log.Fatalf("error reading config file: %v", err)
 	}
 
 	db, err := sql.Open("postgres", cfg.DbURL)
 	if err != nil {
-		log.Fatalf("Error opening the database: %v", err)
+		log.Fatalf("error opening the database: %v", err)
 	}
 	dbQueries := database.New(db)
 
@@ -26,7 +26,7 @@ func main() {
 	cmds := newCommands()
 
 	if len(os.Args) < 2 {
-		log.Fatal("Usage: cli <command> [args...]")
+		log.Fatal("usage: cli <command> [args...]")
 	}
 
 	cmd := command{

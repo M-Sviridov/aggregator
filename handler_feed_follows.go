@@ -11,7 +11,7 @@ import (
 
 func handlerFollow(s *state, cmd command) error {
 	if len(cmd.arguments) != 1 {
-		return fmt.Errorf("Usage: %s <feed_url>", cmd.name)
+		return fmt.Errorf("usage: %s <feed_url>", cmd.name)
 	}
 	url := cmd.arguments[0]
 

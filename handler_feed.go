@@ -11,7 +11,7 @@ import (
 
 func handlerAddFeed(s *state, cmd command) error {
 	if len(cmd.arguments) != 2 {
-		return fmt.Errorf("Usage: %s <feedname> <feedurl>", cmd.name)
+		return fmt.Errorf("usage: %s <feedname> <feedurl>", cmd.name)
 	}
 
 	name := cmd.arguments[0]
