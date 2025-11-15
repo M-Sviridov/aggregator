@@ -7,14 +7,14 @@ import (
 
 func handlerAgg(s *state, cmd command) error {
 	if len(cmd.arguments) != 0 {
-		return fmt.Errorf("%s does not take arguments\n", cmd.name)
+		return fmt.Errorf("%s does not take arguments", cmd.name)
 	}
 
-	rssFeed, err := fetchFeed(context.Background(), "https://www.wagslane.dev/index.xml")
+	feed, err := fetchFeed(context.Background(), "https://www.wagslane.dev/index.xml")
 	if err != nil {
-		return fmt.Errorf("Error fetching feed: %w\n", err)
+		return fmt.Errorf("couldn't fetch feed: %w", err)
 	}
 
-	fmt.Println(rssFeed)
+	fmt.Printf("Feed: %+v\n", feed)
 	return nil
 }
