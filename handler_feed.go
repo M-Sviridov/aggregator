@@ -9,7 +9,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func handlerFeed(s *state, cmd command) error {
+func handlerAddFeed(s *state, cmd command) error {
 	if len(cmd.arguments) != 2 {
 		return fmt.Errorf("Usage: %s <feedname> <feedurl>", cmd.name)
 	}
