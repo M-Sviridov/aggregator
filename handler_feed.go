@@ -19,7 +19,7 @@ func handlerAddFeed(s *state, cmd command) error {
 
 	user, err := s.db.GetUserByName(context.Background(), s.cfg.CurrentUser)
 	if err != nil {
-		return fmt.Errorf("couldn't get user from DB: %w\n", err)
+		return fmt.Errorf("couldn't get user from DB: %w", err)
 	}
 
 	params := database.CreateFeedParams{
@@ -56,13 +56,19 @@ func handlerAddFeed(s *state, cmd command) error {
 
 func handlerShowFeeds(s *state, cmd command) error {
 	if len(cmd.arguments) != 0 {
-		return fmt.Errorf("%s does not take arguments\n", cmd.name)
+		return fmt.Errorf("%s does not take arguments", cmd.name)
 	}
 
 	feeds, err := s.db.GetUserFeeds(context.Background())
 	if err != nil {
-		return fmt.Errorf("Couldn't get user feeds: %w\n", err)
+		return fmt.Errorf("couldn't get user feeds: %w", err)
 	}
+
+	if len(feeds) == 0 {
+		fmt.Println("No feeds were found.")
+		return nil
+	}
+
 	for _, feed := range feeds {
 		fmt.Printf("%s\n", feed.FeedName)
 		fmt.Printf("%s\n", feed.Url)
