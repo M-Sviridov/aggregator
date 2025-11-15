@@ -15,7 +15,7 @@ func handlerLogin(s *state, cmd command) error {
 	}
 	username := cmd.arguments[0]
 
-	_, err := s.db.GetUser(context.Background(), username)
+	_, err := s.db.GetUserByName(context.Background(), username)
 	if err != nil {
 		return fmt.Errorf("User %s does not exist\n", username)
 	}
@@ -41,7 +41,7 @@ func handlerRegister(s *state, cmd command) error {
 		Name:      username,
 	}
 
-	_, err := s.db.GetUser(context.Background(), username)
+	_, err := s.db.GetUserByName(context.Background(), username)
 	if err == nil {
 		return fmt.Errorf("The user %s already exists\n", username)
 	}
@@ -72,6 +72,29 @@ func handlerUsers(s *state, cmd command) error {
 		} else {
 			fmt.Printf("* %s\n", user.Name)
 		}
+	}
+
+	return nil
+}
+
+func handlerFollowing(s *state, cmd command) error {
+	if len(cmd.arguments) != 0 {
+		return fmt.Errorf("%s does not take arguments\n", cmd.name)
+	}
+
+	user, err := s.db.GetUserByName(context.Background(), s.cfg.CurrentUser)
+	if err != nil {
+		return fmt.Errorf("Couldn't get current user: %w\n", err)
+	}
+
+	feedFollows, err := s.db.GetFeedFollowsForUser(context.Background(), user.ID)
+	if err != nil {
+		return fmt.Errorf("Couldn't get current user feed follows: %w\n", err)
+	}
+
+	for _, f := range feedFollows {
+		fmt.Println(f.FeedName)
+		fmt.Println(s.cfg.CurrentUser)
 	}
 
 	return nil
