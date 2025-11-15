@@ -61,7 +61,7 @@ func handlerUsers(s *state, cmd command) error {
 		return fmt.Errorf("%s does not take arguments\n", cmd.name)
 	}
 
-	users, err := s.db.GetAllUsers(context.Background())
+	users, err := s.db.GetUsers(context.Background())
 	if err != nil {
 		return fmt.Errorf("Error in getting all users: %w", err)
 	}
