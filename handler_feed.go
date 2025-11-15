@@ -14,21 +14,21 @@ func handlerAddFeed(s *state, cmd command) error {
 		return fmt.Errorf("Usage: %s <feedname> <feedurl>", cmd.name)
 	}
 
-	feedName := cmd.arguments[0]
-	feedUrl := cmd.arguments[1]
-	username := s.cfg.CurrentUser
-	userDB, err := s.db.GetUserByName(context.Background(), username)
+	name := cmd.arguments[0]
+	url := cmd.arguments[1]
+
+	user, err := s.db.GetUserByName(context.Background(), s.cfg.CurrentUser)
 	if err != nil {
-		return fmt.Errorf("Could not get user from DB: %w\n", err)
+		return fmt.Errorf("couldn't get user from DB: %w\n", err)
 	}
 
 	params := database.CreateFeedParams{
 		ID:        uuid.New(),
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
-		Name:      feedName,
-		Url:       feedUrl,
-		UserID:    userDB.ID,
+		Name:      name,
+		Url:       url,
+		UserID:    user.ID,
 	}
 
 	feed, err := s.db.CreateFeed(context.Background(), params)
@@ -38,9 +38,9 @@ func handlerAddFeed(s *state, cmd command) error {
 
 	followParams := database.CreateFeedFollowParams{
 		ID:        uuid.New(),
-		CreatedAt: feed.CreatedAt,
+		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
-		UserID:    userDB.ID,
+		UserID:    user.ID,
 		FeedID:    feed.ID,
 	}
 
