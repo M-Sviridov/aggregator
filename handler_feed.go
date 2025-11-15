@@ -22,7 +22,7 @@ func handlerAddFeed(s *state, cmd command) error {
 		return fmt.Errorf("Could not get user from DB: %w\n", err)
 	}
 
-	feedParams := database.CreateFeedParams{
+	params := database.CreateFeedParams{
 		ID:        uuid.New(),
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
@@ -31,17 +31,26 @@ func handlerAddFeed(s *state, cmd command) error {
 		UserID:    userDB.ID,
 	}
 
-	feedFollowParams := database.CreateFeedFollowParams{
-		ID:        uuid.New(),
-		CreatedAt: feedParams.CreatedAt,
-		UpdatedAt: time.Now(),
-		UserID:    userDB.ID,
-		FeedID:    feedParams.ID,
+	feed, err := s.db.CreateFeed(context.Background(), params)
+	if err != nil {
+		return fmt.Errorf("couldn't create feed: %w", err)
 	}
 
-	s.db.CreateFeed(context.Background(), feedParams)
-	s.db.CreateFeedFollow(context.Background(), feedFollowParams)
-	fmt.Printf("%+v\n", feedParams)
+	followParams := database.CreateFeedFollowParams{
+		ID:        uuid.New(),
+		CreatedAt: feed.CreatedAt,
+		UpdatedAt: time.Now(),
+		UserID:    userDB.ID,
+		FeedID:    feed.ID,
+	}
+
+	feedFollow, err := s.db.CreateFeedFollow(context.Background(), followParams)
+	if err != nil {
+		return fmt.Errorf("couldn't create feed follow: %w", err)
+	}
+
+	fmt.Printf("%+v\n", feed)
+	fmt.Printf("%+v\n", feedFollow)
 	return nil
 }
 
