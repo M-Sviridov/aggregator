@@ -76,26 +76,3 @@ func handlerUsers(s *state, cmd command) error {
 
 	return nil
 }
-
-func handlerFollowing(s *state, cmd command) error {
-	if len(cmd.arguments) != 0 {
-		return fmt.Errorf("%s does not take arguments\n", cmd.name)
-	}
-
-	user, err := s.db.GetUserByName(context.Background(), s.cfg.CurrentUser)
-	if err != nil {
-		return fmt.Errorf("Couldn't get current user: %w\n", err)
-	}
-
-	feedFollows, err := s.db.GetFeedFollowsForUser(context.Background(), user.ID)
-	if err != nil {
-		return fmt.Errorf("Couldn't get current user feed follows: %w\n", err)
-	}
-
-	for _, f := range feedFollows {
-		fmt.Println(f.FeedName)
-		fmt.Println(s.cfg.CurrentUser)
-	}
-
-	return nil
-}
