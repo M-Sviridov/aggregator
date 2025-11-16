@@ -33,5 +33,6 @@ func newCommands() *commands {
 	c.register("feeds", handlerShowFeeds)
 	c.register("follow", middlewareLoggedIn(handlerFollow))
 	c.register("following", middlewareLoggedIn(handlerShowFeedsFollowing))
+	c.register("unfollow", middlewareLoggedIn(handlerUnfollowFeed))
 	return c
 }
