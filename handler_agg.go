@@ -2,8 +2,12 @@ package main
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"time"
+
+	"github.com/M-Sviridov/aggregator/internal/database"
+	"github.com/google/uuid"
 )
 
 func handlerAgg(s *state, cmd command) error {
@@ -42,7 +46,29 @@ func scrapeFeeds(s *state) error {
 	}
 
 	for _, item := range data.Channel.Item {
-		fmt.Printf("Found post: %s\n", item.Title)
+		publishedAt, err := time.Parse(time.RFC1123Z, item.PubDate)
+		if err != nil {
+			return fmt.Errorf("coudln't parse time: %w", err)
+		}
+
+		postParams := database.CreatePostParams{
+			ID:        uuid.New(),
+			CreatedAt: time.Now(),
+			UpdatedAt: time.Now(),
+			Title:     item.Title,
+			Url:       item.Link,
+			Description: sql.NullString{
+				String: item.Description,
+				Valid:  true,
+			},
+			PublishedAt: publishedAt,
+			FeedID:      feed.ID,
+		}
+
+		_, err = s.db.CreatePost(context.Background(), postParams)
+		if err != nil {
+			return fmt.Errorf("couldn't create post: %w", err)
+		}
 	}
 
 	fmt.Printf("Feed %s collected and %v posts found in total", feed.Name, len(data.Channel.Item))
